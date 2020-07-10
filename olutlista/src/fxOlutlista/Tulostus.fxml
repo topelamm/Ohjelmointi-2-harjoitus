@@ -6,12 +6,12 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="497.0" prefWidth="354.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.jyu.mit.fxgui.ModalController">
+<BorderPane prefHeight="497.0" prefWidth="354.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxOlutlista.TulostusController">
    <bottom>
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
-            <Button mnemonicParsing="false" onAction="#handleDefaultOK" text="Tulosta" />
-          <Button defaultButton="true" mnemonicParsing="false" onAction="#handleDefaultCancel" text="Eiku" />
+            <Button mnemonicParsing="false" onAction="#handleTulosta" text="Tulosta" />
+          <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOK" text="Eiku" />
         </buttons>
          <padding>
             <Insets right="10.0" />

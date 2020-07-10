@@ -59,7 +59,7 @@
                         <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction ="#handleTulosta" text="Tulosta...">
+                  <MenuItem mnemonicParsing="false" onAction="#handleTulosta" text="Tulosta...">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
@@ -92,7 +92,7 @@
                         <KeyCodeCombination alt="UP" code="H" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction= "#handleInfo" text="Tietoja...">
+                  <MenuItem mnemonicParsing="false" onAction="#handleInfo" text="Tietoja...">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
@@ -105,7 +105,7 @@
    <left>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-            <ListChooser rivit="Lapin Kulta&#10;Karjala&#10;Punk Ipa&#10;Koff&#10;" BorderPane.alignment="CENTER" />
+            <ListChooser fx:id="chooserOluet" rivit="Lapin Kulta&#10;Karjala&#10;Punk Ipa&#10;Koff&#10;" BorderPane.alignment="CENTER" />
          </center>
          <top>
             <VBox prefHeight="105.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -118,7 +118,7 @@
                         <Insets left="60.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField />
+                  <TextField onAction="#handleHakuehto" />
                   <ComboBoxChooser prefHeight="25.0" prefWidth="205.0" promptText="Tyylilaji" />
                   <Label text="Oluet">
                      <VBox.margin>
@@ -134,7 +134,7 @@
       </BorderPane>
    </left>
    <center>
-      <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="389.0" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="panelOlut" fitToWidth="true" prefHeight="200.0" prefWidth="389.0" BorderPane.alignment="CENTER">
          <content>
             <GridPane hgap="10.0">
               <columnConstraints>

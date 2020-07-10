@@ -26,7 +26,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Button>
-          <Button cancelButton="true" layoutX="500.0" layoutY="500.0" mnemonicParsing="false" onAction="#handleDefaultCancel" prefHeight="27.0" prefWidth="225.0" text="Eiku">
+          <Button cancelButton="true" layoutX="500.0" layoutY="500.0" mnemonicParsing="false" onAction = "#handleDefaultCancel" prefHeight="27.0" prefWidth="225.0" text="Eiku">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>

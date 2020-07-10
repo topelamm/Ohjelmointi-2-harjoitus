@@ -3,6 +3,7 @@ package fxOlutlista;
 import javafx.scene.layout.Pane;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import olutlista.Olutlista;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 
@@ -17,7 +18,7 @@ public class OlutlistaMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-		    FXMLLoader ldr = new FXMLLoader(getClass().getResource("OlutlistaGUIView.fxml")); 
+		    final FXMLLoader ldr = new FXMLLoader(getClass().getResource("OlutlistaGUIView.fxml")); 
 	        final Pane root = (Pane)ldr.load();
 	        final OlutlistaGUIController olutlistaCtrl = (OlutlistaGUIController)ldr.getController();   
 	        
@@ -26,6 +27,8 @@ public class OlutlistaMain extends Application {
 	        primaryStage.setScene(scene);
 	        primaryStage.setTitle("Olutlista"); 
 	        
+	        Olutlista olutlista = new Olutlista();
+	        olutlistaCtrl.setOlutlista(olutlista);
 	        //Platform.setImplicitExit(false); 
 	        
 	        primaryStage.setOnCloseRequest((event) -> {
@@ -36,6 +39,7 @@ public class OlutlistaMain extends Application {
 	        primaryStage.show();
 	    } catch(Exception e) {
 	        e.printStackTrace();
+	        System.err.println(e.getMessage());
 		}
 	}
 	

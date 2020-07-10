@@ -1,12 +1,11 @@
 package fxOlutlista;
 
-import javafx.application.Platform;
+import fi.jyu.mit.fxgui.ModalController;
 import javafx.fxml.FXML;
-
-
-
+import javafx.scene.control.TextField;
 import fi.jyu.mit.fxgui.Dialogs;
 import fi.jyu.mit.fxgui.ModalControllerInterface;
+
 
 
 /**
@@ -28,14 +27,6 @@ public class UusiolutGUIController implements ModalControllerInterface<String> {
         tallenna();
     }
     
-    
-    /**
-     * Käsitellään lopetuskäsky
-     */
-    @FXML private void handleLopeta() {
-        tallenna();
-        Platform.exit();
-    }
 
     
     /**
@@ -52,6 +43,22 @@ public class UusiolutGUIController implements ModalControllerInterface<String> {
     public boolean voikoSulkea() {
         tallenna();
         return true;
+    }
+
+
+
+  
+    
+    @FXML private TextField textVastaus;
+
+    
+    @FXML private void handleOK() {
+        ModalController.closeStage(textVastaus);
+    }
+
+    
+    @FXML private void handleCancel() {
+        ModalController.closeStage(textVastaus);
     }
 
 
@@ -73,9 +80,13 @@ public class UusiolutGUIController implements ModalControllerInterface<String> {
 
 
     @Override
-    public void setDefault(String arg0) {
+    public void setDefault(String oletus) {
         // TODO Auto-generated method stub
         
     }
+
+
+   
+    
 
 }
