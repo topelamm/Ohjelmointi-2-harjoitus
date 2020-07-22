@@ -110,22 +110,15 @@
          <top>
             <VBox prefHeight="105.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Hakuehto" VBox.vgrow="ALWAYS">
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets left="60.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField onAction="#handleHakuehto" />
-                  <ComboBoxChooser prefHeight="25.0" prefWidth="205.0" promptText="Tyylilaji" />
+               <Label alignment="CENTER" maxWidth="300.0" text="Hakuehto" />
+				<ComboBoxChooser fx:id="cbKentat" maxWidth="200.0" onAction="#handleHakuehto" rivit="Nimi &#10;Tyylilaji" />
+				<TextField fx:id="hakuehto" onKeyReleased="#handleHakuehto" />
                   <Label text="Oluet">
                      <VBox.margin>
                         <Insets left="60.0" />
                      </VBox.margin>
                      <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="25.0" right="5.0" top="10.0" />
                      </padding>
                   </Label>
                </children>

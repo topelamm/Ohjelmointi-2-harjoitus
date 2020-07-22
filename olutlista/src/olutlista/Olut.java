@@ -25,7 +25,7 @@ public class Olut {
     private double      arvosana        = 0;
     private String      resepti         = "";
     private String      huomioita       = "";
-
+    
     private static int  seuraavaNro    = 1;
 
 

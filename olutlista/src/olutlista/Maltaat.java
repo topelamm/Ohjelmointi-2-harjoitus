@@ -159,7 +159,7 @@ public class Maltaat implements Iterable<Mallas> {
         
         System.out.println("========= Maltaat testi ================");
         
-        List<Mallas> maltaat2 = maltaat.annaMaltaat(2);
+        List<Mallas> maltaat2 = maltaat.annaMaltaat(1);
         
         for(Mallas mal : maltaat2) {
             System.out.print(mal.getTunnusNro()  +" ");

@@ -32,6 +32,7 @@ package olutlista;
          */
         public void lisaa(Mauste mau) {
             alkiot.add(mau);
+            mau.rekisteroi();
         }
         
         /**
@@ -160,9 +161,16 @@ package olutlista;
             List<Mauste> mausteet2 = mausteet.annaMausteet(2);
             
             for(Mauste mau : mausteet2) {
-                System.out.print(mau.getTunnusNro()  +" ");
+                //System.out.print(mau.getTunnusNro()  +" ");
                 mau.tulosta(System.out);
                 System.out.println(" ");
+            }
+                List<Mauste> mausteet23 = mausteet.annaMausteet(1);
+                
+                for(Mauste ma1u : mausteet23) {
+                    //System.out.print(mau.getTunnusNro()  +" ");
+                    ma1u.tulosta(System.out);
+                    System.out.println(" ");
             }
             
         }

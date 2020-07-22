@@ -61,8 +61,10 @@ public class Mauste {
      * @param out tietovirta, johon tulostetaan
      */
     public void tulosta(PrintStream out) {
+        this.mauste = this.tunnusNro + " " + this.olutNro +" " + this.humalaNro + " " + this.mallasNro;
         out.println(mauste);
     }
+    
     
     /**
      * Tulostetaan oluen tiedot
@@ -124,11 +126,33 @@ public class Mauste {
     }
     
     /**
+     * @param oid oluen id
+     */
+    public void setOlutNro(int oid) {
+        this.olutNro = oid;
+    }
+    
+    /**
+     * @param mid maltaan id
+     * 
+     */
+    public void setMallasNro(int mid) {
+        this.mallasNro = mid;
+    }
+    
+    /**
+     * @param hid humalan id
+     */
+    public void setHumalaNro(int hid) {
+        this.humalaNro = hid;
+    }
+    /**
      * Testiohjelma mausteille
      * @param args ei käytössä
      */
     public static void main (String[] args) {
         Mauste mau = new Mauste();
+        mau.rekisteroi();
         mau.taytaMauste(1,1,1);
         mau.tulosta(System.out);
     }

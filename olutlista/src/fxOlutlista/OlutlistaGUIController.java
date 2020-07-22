@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import olutlista.Mallas;
 import olutlista.Mauste;
-
+import olutlista.Mausteet;
 import olutlista.Olut;
 import olutlista.Olutlista;
 import olutlista.SailoException;
@@ -31,15 +31,12 @@ import fi.jyu.mit.fxgui.*;
 public class OlutlistaGUIController implements Initializable {
     
 
-    @FXML
-    private ScrollPane panelOlut;
-    
-    @FXML private TextField hakuehto;
-    @FXML private ComboBoxChooser<String> cbKentat;
-    @FXML private Label labelVirhe;
-
-    @FXML
-    private ListChooser<Olut>chooserOluet;
+    @FXML private   ScrollPane panelOlut;
+    @FXML private   TextField hakuehto;
+    @FXML private   ComboBoxChooser<String> cbKentat;
+    @FXML private   Label labelVirhe;
+    @FXML private   ListChooser<Olut>chooserOluet;
+    @FXML private   ListChooser<Mausteet>chooserMausteet;
     
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
@@ -60,8 +57,13 @@ public class OlutlistaGUIController implements Initializable {
     * Käsitellään oluen lisäys uudessa ikkunassa
     */
    @FXML private void handleUusiOlut() {
-       uusiMallas();
+       
        uusiOlut();
+       //uusiMallas(); //lisää mallas relaatioon/mauste, mahdollinen useampi (loop?)
+
+       //uusiMauste(); //toteuta maustekohdalla ja maustelista, jokin kahva sille mitä tehdään, ks metadin sisältö ja setolutnro
+       //uusiHumala(); //sama tähän kuin mallas
+       
        
        //ModalController.showModal(OlutlistaGUIController.class.getResource("Uusiolut.fxml"), "Lisää olut", null,"");
    }
@@ -131,10 +133,13 @@ public class OlutlistaGUIController implements Initializable {
         Platform.exit();
     }
 
-    private Olutlista olutlista;
-    private Olut olutKohdalla;
-    private TextArea areaOlut = new TextArea();
-    
+    private     Olutlista       olutlista;
+    private     Olut            olutKohdalla;
+    private     TextArea        areaOlut = new TextArea();
+    private     Mausteet        mausteetlista; //TARKISTA MITEN TOTEUTAT LOPULTA
+    private     Mausteet        mausteetKohdalla;
+    private     TextArea        areaMausteet = new TextArea();
+
     /**
      * Tietojen tallennus
      */
@@ -182,14 +187,31 @@ public class OlutlistaGUIController implements Initializable {
         Olut uusi = new Olut();
         uusi.rekisteroi();
         uusi.taytaOlut();
-        try {
+       try {
             olutlista.lisaa(uusi);
         } catch(SailoException e) {
-            Dialogs.showMessageDialog("Ongelmia uuden luomisessa"+ " " + e.getMessage());
+           Dialogs.showMessageDialog("Ongelmia uuden luomisessa"+ " " + e.getMessage());
             return;
         }
         hae(uusi.getTunnusNro());
+        
+        Mauste mauste = new Mauste();
+        mauste.rekisteroi();
+        mauste.taytaMauste(uusi.getTunnusNro(), 1, 1);
+        
+        olutlista.lisaa(mauste);
     }
+    
+    /** 
+     * Tekee uuden tyhjät mausteet editointia varten 
+     */ 
+    public void uusiMauste() { 
+        if ( olutKohdalla == null ) return;  
+        Mauste uusi = new Mauste();
+        mausteetlista.lisaa(uusi);
+        uusi.rekisteroi();
+        uusi.setOlutNro(olutKohdalla.getTunnusNro());
+    } 
     
     
     /** 
@@ -200,7 +222,7 @@ public class OlutlistaGUIController implements Initializable {
         Mallas mal = new Mallas();  
         mal.rekisteroi();  
         mal.taytaMallas(olutKohdalla.getTunnusNro());  
-        olutlista.lisaa(mal);  
+        //mausteetlista.lisaa(mal);
         hae(olutKohdalla.getTunnusNro());          
     } 
 
@@ -227,7 +249,24 @@ public class OlutlistaGUIController implements Initializable {
         
         areaOlut.setText("");
         try(PrintStream os = TextAreaOutputStream.getTextPrintStream(areaOlut)){
-            olutKohdalla.tulosta(os);
+            tulosta(os,olutKohdalla);  
+
+        }
+        
+    }
+    
+    /**
+     * 
+     */
+    protected void naytaMausteet() {
+        mausteetKohdalla = chooserMausteet.getSelectedObject();
+        
+        if(mausteetKohdalla == null) return;
+        
+        areaOlut.setText("");
+        try(PrintStream os = TextAreaOutputStream.getTextPrintStream(areaOlut)){
+            tulosta(os,olutKohdalla);  
+
         }
         
     }
@@ -238,7 +277,7 @@ public class OlutlistaGUIController implements Initializable {
     public void setOlutlista(Olutlista olutlista) {
         this.olutlista = olutlista;
         naytaOlut();
-        uusiMallas();
+        //naytaMausteet();
     }
     
     /**
@@ -255,6 +294,19 @@ public class OlutlistaGUIController implements Initializable {
             mau.tulosta(os);  
     }
     
+    /**
+     * Tulostaa oluen tiedot
+     * @param os tietovirta johon tulostetaan
+     * @param mauste tulostettava jäsen
+     */
+    public void tulosta(PrintStream os, final Mauste mauste) {
+        os.println("----------------------------------------------");
+        mauste.tulosta(os);
+        os.println("----------------------------------------------");
+        //List<Mauste> mausteet = olutlista.annaMausteet(mauste);   
+        //for (Mauste mau:mausteet)
+        //    mau.tulosta(os);  
+    }
     
     /**
      * Tulostaa listassa olevat oluet tekstialueeseen
