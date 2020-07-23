@@ -21,6 +21,7 @@ public class Olut {
     private int         tunnusNro;
     private String      nimi            ="";
     private String      tyyli           ="";
+    private String      mallas          ="";
     private double      vahvuus         = 0;
     private double      arvosana        = 0;
     private String      resepti         = "";
@@ -49,6 +50,7 @@ public String getNimi() {
 public void taytaOlut() {
     nimi = "Lapin Kulta";
     tyyli = "Lager";
+    mallas = "ohramallas";
     vahvuus = 4.5;
     arvosana = 9;
     resepti = "teollista kuraa";
@@ -63,6 +65,7 @@ public void tulosta(PrintStream out) {
     out.println(String.format("%01d", tunnusNro));
     out.println(nimi);
     out.println(tyyli);
+    out.println(mallas);
     out.println(vahvuus);
     out.println(arvosana);
     out.println(resepti);

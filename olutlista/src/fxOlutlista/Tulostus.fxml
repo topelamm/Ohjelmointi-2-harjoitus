@@ -21,7 +21,7 @@
       </ButtonBar>
    </bottom>
    <center>
-      <TextArea fx:id="tulostusAlue" prefHeight="200.0" prefWidth="200.0" text="Tulostettava olut&#10;----------------------------------------------&#10;id             : 1&#10;nimi           :  Lapin kulta&#10;tyylilaji       :  Lager&#10;vahvuus     :  4,5&#10;Arvio          :  9&#10;humalat     :  Saaz&#10;maltaat      :  Ohramallas&#10;reseptiikka :  Massatuotettua kuraa  &#10;&#10;lisätietoja    : ei jatkoon&#10;----------------------------------------------&#10;&#10;&#10;&#10;&#10;&#10; &#10;&#10;&#10;&#10;" BorderPane.alignment="CENTER" />
+      <TextArea fx:id="tulostusAlue" prefHeight="200.0" prefWidth="200.0" text="" BorderPane.alignment="CENTER" >
          <font>
             <Font name="Courier New" size="12.0" />
          </font>
