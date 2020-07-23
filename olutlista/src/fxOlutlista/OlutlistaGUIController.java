@@ -38,6 +38,8 @@ public class OlutlistaGUIController implements Initializable {
     @FXML private   ListChooser<Olut>chooserOluet;
     @FXML private   ListChooser<Mausteet>chooserMausteet;
     
+    private String olutlistannimi = "oluet";
+    
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
         alusta();
@@ -133,6 +135,8 @@ public class OlutlistaGUIController implements Initializable {
         Platform.exit();
     }
 
+    //=====================================================================================================================================================================================================
+    
     private     Olutlista       olutlista;
     private     Olut            olutKohdalla;
     private     TextArea        areaOlut = new TextArea();
@@ -165,6 +169,22 @@ public class OlutlistaGUIController implements Initializable {
         }
         labelVirhe.setText(virhe);
         labelVirhe.getStyleClass().add("virhe");
+    }
+
+    private void setTitle(String title) {
+        ModalController.getStage(hakuehto).setTitle(title);
+    }
+    
+    /**
+     * Alustaa olutlistan lukemalla sen valitun nimisestä tiedostosta
+     * @param nimi tiedosto josta olutlistan tiedot luetaan
+     */
+    protected void lueTiedosto(String nimi) {
+        olutlistannimi = nimi;
+        setTitle("Olutlista - " + olutlistannimi);
+        String virhe = "Ei osata lukea vielä";  // TODO: tähän oikea tiedoston lukeminen
+        // if (virhe != null) 
+            Dialogs.showMessageDialog(virhe);
     }
 
     
@@ -232,7 +252,7 @@ public class OlutlistaGUIController implements Initializable {
      */
     protected void alusta() {
         panelOlut.setContent(areaOlut);
-        areaOlut.setFont (new Font ("Comicsans", 12));
+        areaOlut.setFont (new Font ("Courier New", 12));
         panelOlut.setFitToHeight(true);
         
         chooserOluet.clear();

@@ -35,7 +35,7 @@ public class Olut {
  * @example
  * <pre name="test">
  * Olut lappari = new Olut();
- * lappari.vastaaLapinKulta();
+ * lappari.taytaOlut();
  * lappari.getNimi() =R= "Lapin Kulta";
  * </pre>
  */
