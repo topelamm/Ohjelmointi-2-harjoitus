@@ -189,7 +189,7 @@ public class Olutlista {
      * loytyneet.get(0) == saaz21 === true;
      * </pre>
      */
-    public List<Humala> annaHumalat(Olut olut){
+    public Humala annaHumalat(Olut olut){
         return humalat.annaHumalat(olut.getTunnusNro());
     }
     
@@ -218,6 +218,21 @@ public class Olutlista {
         humalat.lueTiedostosta();
         mausteet.lueTiedostosta();
     }
+    
+    /**
+     * @throws SailoException poikkeus
+     */
+    public void lueOluetTiedostosta() throws SailoException{
+        oluet.lueTiedostosta();
+    }
+    
+    /**
+     * @throws SailoException poikkeus
+     */
+    public void lueHumalatTiedostosta() throws SailoException{
+        humalat.lueTiedostosta();
+    }
+    
     
     /**
      * nimien asetus
@@ -303,10 +318,10 @@ public class Olutlista {
                 for (Mallas mallas : loytyneet)
                     mallas.tulosta(System.out);
                 
-                List<Humala> loytyneet2 = olutlista.annaHumalat(olut);
-                for (Humala humala : loytyneet2)
-                    humala.tulosta(System.out);
-                    System.out.println(" ");
+             //   List<Humala> loytyneet2 = olutlista.annaHumalat(olut);
+             //   for (Humala humala : loytyneet2)
+             //       humala.tulosta(System.out);
+             //       System.out.println(" ");
                     
                 List<Mauste> loytyneet3 = olutlista.annaMausteet(olut);
                 for (Mauste mauste : loytyneet3)

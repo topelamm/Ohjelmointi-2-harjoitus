@@ -56,7 +56,7 @@ public class Humala {
      * @param out tietovirta, johon tulostetaan
      */
     public void tulosta(PrintStream out) {
-        out.println(humala);
+        out.println(tunnusNro + "humala:" + humala );
     }
     
     /**

@@ -1,12 +1,13 @@
 package olutlista;
 
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 //import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 //import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
+//import java.io.FileReader;
 //import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  * osaa lisätä ja poistaa oluen
@@ -92,7 +94,6 @@ public class Oluet implements Iterable<Olut> {
     
     /**
      * Lukee oluet tiedostosta
-     * @param nimi tiedoston perusnimi
      * @throws SailoException epäonnistuessa
      * 
      * @example
@@ -130,38 +131,20 @@ public class Oluet implements Iterable<Olut> {
      * 
      * </pre>
      */
-    public void lueTiedostosta(String nimi) throws SailoException{
-        setTiedostonPerusNimi(nimi);
-        //try ( PrintStream fi = new PrintStream (new FileOutputStream (getTiedostonNimi()))){
-        //    tiedostonNimi = fi.;
-        //    if (tiedostonNimi == null) throw new SailoException ("Listan nimi puuttuu");
-        //    String rivi = fi.toString();
-        //    if(rivi == null) throw new SailoException ("Maksimikoko puuttu");
-            
-        //    while((rivi = fi.toString()) != null) {
-        //        rivi = rivi.trim();
-        //        if ("".contentEquals(rivi)|| rivi.charAt(0) == ';') continue;
-        //        Olut olut = new Olut();
-        //        olut.parse(rivi);
-        //        lisaa(olut);
-        try ( BufferedReader fi = new BufferedReader (new FileReader (getTiedostonNimi()))){
-                //tiedostonNimi = fi.readLine();
-                if (tiedostonNimi == null) throw new SailoException ("Listan nimi puuttuu");
-                //String rivi = fi.nextLine();
-                //if(rivi == null) throw new SailoException ("Maksimikoko puuttu");
-                
-                while((tiedostonNimi = fi.readLine())  != null) {
-                    tiedostonNimi = tiedostonNimi.trim();
-                    if ("".contentEquals(tiedostonNimi)|| tiedostonNimi.charAt(0) == ';') continue;
-                    Olut olut = new Olut();
-                    olut.parse(tiedostonNimi);
-                    lisaa(olut);
+    public void lueTiedostosta() throws SailoException{
+        tiedostonNimi = getTiedostonNimi();
+        try (Scanner fi = new Scanner (new FileInputStream(tiedostonNimi))){
+            while (fi.hasNext()) {
+                String rivi = fi.nextLine();
+                rivi = rivi.trim();
+                Olut olut = new Olut();
+                olut.parse(rivi);
+                lisaa(olut);
             }
             muutettu = false;
-        } catch (FileNotFoundException e) {
-            throw new SailoException ( "Tiedosto" + " " + getTiedostonNimi() + " " + "ei aukea");
-        } catch (IOException e) {
-           throw new SailoException ("Ongelmia tiedoston kanssa:" + e.getMessage());
+        }catch (FileNotFoundException e) {
+            throw new SailoException("Tiedosto" + getTiedostonNimi() + "ei aukea");
+            
         }
     }
     
@@ -169,9 +152,9 @@ public class Oluet implements Iterable<Olut> {
      * Lukeminen aikasemmin annetun nimisestä tiedostosta
      * @throws SailoException jos lukeminen epäonnistuu
      */
-    public void lueTiedostosta() throws SailoException {
-        lueTiedostosta(getTiedostonPerusNimi());
-    }
+   // public void lueTiedostosta() throws SailoException {
+   //     lueTiedostosta(getTiedostonPerusNimi());
+   // }
     
     
 

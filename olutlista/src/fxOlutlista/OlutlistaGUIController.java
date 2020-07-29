@@ -20,7 +20,7 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
+//import java.util.List;
 import java.util.ResourceBundle;
 
 import fi.jyu.mit.fxgui.*;
@@ -195,7 +195,8 @@ public class OlutlistaGUIController implements Initializable {
         olutlistannimi = nimi;
         setTitle("Olutlista - " + olutlistannimi);
         try {
-            olutlista.lueTiedostosta(nimi);
+            olutlista.lueOluetTiedostosta();
+            olutlista.lueHumalatTiedostosta();
             hae(0);
             return null;
         } catch (SailoException e) {
@@ -204,7 +205,7 @@ public class OlutlistaGUIController implements Initializable {
             if ( virhe != null)  Dialogs.showMessageDialog(virhe);
             return virhe;
         }
-           
+       
     }
 
     
@@ -270,10 +271,16 @@ public class OlutlistaGUIController implements Initializable {
         
         if(olutKohdalla == null) return;
         
+        Humala humala;
+        humala = olutlista.annaHumalat(olutKohdalla);
+       
+
         areaOlut.setText("");
-        try(PrintStream os = TextAreaOutputStream.getTextPrintStream(areaOlut)){
-            tulosta(os,olutKohdalla);  
+        try (PrintStream os = TextAreaOutputStream.getTextPrintStream(areaOlut)) {
+            olutKohdalla.tulosta(os);
+            humala.tulosta(os);
         }
+
     }
     
     
@@ -294,9 +301,9 @@ public class OlutlistaGUIController implements Initializable {
         os.println("----------------------------------------------");
         olut.tulosta(os);
         os.println("----------------------------------------------");
-        List<Humala> humalat = olutlista.annaHumalat(olut);   
-        for (Humala hum:humalat)
-            hum.tulosta(os);  
+        Humala humala = olutlista.annaHumalat(olut);
+        humala.tulosta(os);
+
     }
 
     /**

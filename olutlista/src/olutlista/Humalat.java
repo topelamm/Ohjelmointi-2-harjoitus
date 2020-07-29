@@ -1,10 +1,11 @@
 package olutlista;
 
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
+//import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
@@ -47,7 +48,6 @@ public class Humalat implements Iterable<Humala> {
     
     /**
      * Lukee oluet tiedostosta
-     * @param nimi tiedoston perusnimi
      * @throws SailoException epäonnistuessa
      * 
      * @example
@@ -85,26 +85,20 @@ public class Humalat implements Iterable<Humala> {
      * 
      * </pre>
      */
-    public void lueTiedostosta(String nimi) throws SailoException{
-        setTiedostonPerusNimi(nimi);
-        try ( BufferedReader fi = new BufferedReader (new FileReader (getTiedostonNimi()))){
-            //tiedostonNimi = fi.readLine();
-            if (tiedostonNimi == null) throw new SailoException ("Listan nimi puuttuu");
-            String rivi = fi.readLine();
-            //if(rivi == null) throw new SailoException ("Maksimikoko puuttu");
-            
-            while((rivi = fi.readLine())  != null) {
+    public void lueTiedostosta() throws SailoException{
+        tiedostonNimi = getTiedostonNimi();
+        try (Scanner fi = new Scanner (new FileInputStream(tiedostonNimi))){
+            while (fi.hasNext()) {
+                String rivi = fi.nextLine();
                 rivi = rivi.trim();
-                if ("".contentEquals(tiedostonNimi)|| tiedostonNimi.charAt(0) == ';') continue;
                 Humala humala = new Humala();
-                humala.parse(tiedostonNimi);
+                humala.parse(rivi);
                 lisaa(humala);
-        }
-        muutettu = false;
-        } catch (FileNotFoundException e) {
-        throw new SailoException ( "Tiedosto" + " " + getTiedostonNimi() + " " + "ei aukea");
-        }catch (IOException e) {
-            throw new SailoException("onkelmia:" + e.getMessage());
+            }
+            muutettu = false;
+        }catch (FileNotFoundException e) {
+            throw new SailoException("Tiedosto" + getTiedostonNimi() + "ei aukea");
+            
         }
     }
     
@@ -112,9 +106,9 @@ public class Humalat implements Iterable<Humala> {
      * Lukeminen aikasemmin annetun nimisestä tiedostosta
      * @throws SailoException jos lukeminen epäonnistuu
      */
-    public void lueTiedostosta() throws SailoException {
-        lueTiedostosta(getTiedostonPerusNimi());
-    }
+   // public void lueTiedostosta() throws SailoException {
+   //     lueTiedostosta(getTiedostonPerusNimi());
+   // }
     
     /**
      * Tallentaa humalat tiedostoon
@@ -249,10 +243,10 @@ public class Humalat implements Iterable<Humala> {
      *  
      * </pre>
      */
-    public List<Humala> annaHumalat (int tunnusnro){
-        List<Humala> loydetyt = new ArrayList<Humala>();
+    public Humala annaHumalat (int tunnusnro){
+        Humala loydetyt = new Humala();
         for (Humala hum : alkiot)
-            if (hum.getOlutNro() == tunnusnro) loydetyt.add(hum);
+            if (hum.getOlutNro() == tunnusnro) loydetyt = hum;
         return loydetyt;
     }
     
@@ -279,13 +273,13 @@ public class Humalat implements Iterable<Humala> {
         
         System.out.println("========= Humalat testi ================");
         
-        List<Humala> humalat2 = humalat.annaHumalat(2);
+        //Humala humalat2 = humalat.annaHumalat(2);
         
-        for(Humala hum : humalat2) {
-            System.out.print(hum.getTunnusNro()  +" ");
-            hum.tulosta(System.out);
-            System.out.println(" ");
-        }
+        //for(Humala hum : humalat2) {
+        //    System.out.print(hum.getTunnusNro()  +" ");
+        //    hum.tulosta(System.out);
+        //    System.out.println(" ");
+        //}
         
     }
     
