@@ -2,6 +2,7 @@ package fxOlutlista;
 	
 import javafx.scene.layout.Pane;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import olutlista.Olutlista;
 import javafx.scene.Scene;
@@ -28,7 +29,8 @@ public class OlutlistaMain extends Application {
 	        primaryStage.setTitle("Olutlista"); 
 	        
 	        Olutlista olutlista = new Olutlista();
-	        olutlistaCtrl.setOlutlista(olutlista);
+            olutlistaCtrl.setOlutlista(olutlista);
+            
 	        //Platform.setImplicitExit(false); 
 	        
 	        primaryStage.setOnCloseRequest((event) -> {
@@ -36,7 +38,15 @@ public class OlutlistaMain extends Application {
 	            if ( !olutlistaCtrl.voikoSulkea() ) event.consume();
 	        });
 	        
+	 
 	        primaryStage.show();
+	        
+	        Application.Parameters params = getParameters();
+	        if (params.getRaw().size()>0)
+	                olutlistaCtrl.lueTiedosto(params.getRaw().get(0));
+	        else
+	                if(!olutlistaCtrl.avaa()) Platform.exit();
+	        
 	    } catch(Exception e) {
 	        e.printStackTrace();
 	        System.err.println(e.getMessage());

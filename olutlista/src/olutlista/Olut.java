@@ -1,7 +1,9 @@
 package olutlista;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+
+import java.io.*;
+
+import fi.jyu.mit.ohj2.Mjonot;
 
 /**
  *  tietää oluen kentät (nimi,vahvuus tyyli, arvio, jne)
@@ -107,6 +109,81 @@ public int rekisteroi() {
  * @return jäsenen tunnusnumero
  */
 public int getTunnusNro() {
+    return tunnusNro;
+}
+
+/**
+ * Asettaa tunnusnumeron ja samalla varmistaa että
+ * seuraava numero on aina suurempi kuin tähän mennessä suurin.
+ * @param nr asetettava tunnusnumero
+ */
+private void setTunnusNro(int nr) {
+    tunnusNro = nr;
+    if (tunnusNro >= seuraavaNro) seuraavaNro = tunnusNro + 1;
+}
+
+/**
+ * Oluen tiedot merkkijonona tiedostoon tallennettavaksi
+ * @example
+ * <pre name="test">
+ * Olut olut = new Olut();
+ * olut.parse(" 2 | Lapin Kulta | Lager");
+ * olut.toString().startsWith("2|Lapin Kulta|Lager|") ===true;
+ * </pre>
+ *
+ */
+@Override
+public String toString() {
+    return "" +
+            getTunnusNro()+ "|"+
+            nimi + "|"+
+            tyyli + "|"+
+            mallas + "|"+
+            vahvuus + "|"+ 
+            arvosana + "|"+ 
+            resepti + "|"+ 
+            huomioita; 
+}
+
+/**
+ * Selvittää oluen tiedot tolpilla erotelluista merkkijonoista
+ * @param rivi mistä oluen tiedot otetaan
+ * 
+ * @example
+ * <pre name="test">
+ * Olut olut = new Olut();
+ * olut.parse(" 2 | Lapin Kulta | Lager");
+ * olut.getTunnusNro() === 2;
+ * olut.toString().startsWith("2|Lapin Kulta|Lager|") === true;
+ * 
+ * olut.rekisteroi();
+ * int n = olut.getTunnusNro();
+ * olut.parse (""+(n+20));
+ * olut.rekisteroi();
+ * olut.getTunnusNro()=== n+20+1;
+ * 
+ * </pre>
+ */
+public void parse(String rivi) {
+    StringBuilder sb = new StringBuilder(rivi);
+    setTunnusNro(Mjonot.erota(sb, '|', getTunnusNro()));
+    nimi = Mjonot.erota(sb, '|', nimi);
+    tyyli = Mjonot.erota(sb, '|', tyyli);
+    mallas = Mjonot.erota(sb, '|', mallas);
+    vahvuus = Mjonot.erota(sb, '|', vahvuus);
+    arvosana = Mjonot.erota(sb, '|', arvosana);
+    resepti = Mjonot.erota(sb, '|', resepti);
+    huomioita = Mjonot.erota(sb, '|', huomioita);
+}
+
+@Override
+public boolean equals(Object olut) {
+    if ( olut == null) return false;
+    return this.toString().contentEquals(olut.toString());
+}
+
+@Override
+public int hashCode(){
     return tunnusNro;
 }
 

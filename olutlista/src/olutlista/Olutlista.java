@@ -1,5 +1,6 @@
 package olutlista;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,10 +14,10 @@ import java.util.List;
  */
 
 public class Olutlista {
-    private final Oluet oluet = new Oluet();
-    private final Humalat humalat = new Humalat();
+    private       Oluet oluet = new Oluet();
+    private       Humalat humalat = new Humalat();
     private final Maltaat maltaat = new Maltaat();
-    private final Mausteet mausteet = new Mausteet();
+    private       Mausteet mausteet = new Mausteet();
 
     /**
      * palauttaa oluiden määrän
@@ -101,6 +102,17 @@ public class Olutlista {
      */
     public Olut annaOlut(int i) throws IndexOutOfBoundsException {
         return oluet.anna(i);
+    }
+    
+    /**
+     * Palauttaa oluiden viiteet
+     * @param hakuehto hakuehto
+     * @param k etsittävän indeksi
+     * @return löytyneet oluet
+     * @throws SailoException vikatilanteessa
+     */
+    public Collection<Olut> etsi(String hakuehto, int k) throws SailoException{
+        return oluet.etsi(hakuehto, k);
     }
     
     /**
@@ -197,9 +209,27 @@ public class Olutlista {
      * @throws SailoException poikkeus epäonnistuneessa lukemisessa
      */
     public void lueTiedostosta(String nimi) throws SailoException{
-        oluet.lueTiedostosta(nimi);
-        maltaat.lueTiedostosta(nimi);
-        humalat.lueTiedostosta(nimi);
+        oluet = new Oluet();
+        humalat = new Humalat();
+        mausteet = new Mausteet();
+        
+        setTiedosto(nimi);
+        oluet.lueTiedostosta();
+        humalat.lueTiedostosta();
+        mausteet.lueTiedostosta();
+    }
+    
+    /**
+     * nimien asetus
+     * @param nimi nimi
+     */
+    public void setTiedosto(String nimi) {
+       
+        String hakemistonNimi = "";
+        if( !nimi.isEmpty() ) hakemistonNimi = nimi + "_";
+        oluet.setTiedostonPerusNimi(hakemistonNimi + "nimet");
+        humalat.setTiedostonPerusNimi(hakemistonNimi + "humalat");
+        mausteet.setTiedostonPerusNimi(hakemistonNimi + "mausteet");
     }
     
     /**
@@ -207,12 +237,27 @@ public class Olutlista {
      * @throws SailoException poikkeus tallennuksen ongelmissa
      */
     public void tallenna() throws SailoException{
-        oluet.talleta();
-        maltaat.tallenna();
-        humalat.tallenna();
+        String virhe = "";
+        try {
+            oluet.talleta();
+        } catch (SailoException ex) {
+            virhe = ex.getMessage();
+        }
+
+        try {
+            humalat.tallenna();
+        }catch (SailoException ex) {
+            virhe += ex.getMessage();
+        }
+         try {                           
+             mausteet.tallenna();         
+        }catch (SailoException ex) {    
+             virhe += ex.getMessage();
+        }
+        if(!"".equals(virhe)) throw new SailoException(virhe);
     }
-    
-    /**
+        
+    /**  }                               
      * testiohjelma
      * @param args ei käytössä
      */
@@ -246,7 +291,7 @@ public class Olutlista {
             Humala saaz22 = new Humala(id2); saaz22.taytaHumala(id2); olutlista.lisaa(saaz22);
             Humala saaz23 = new Humala(id2); saaz23.taytaHumala(id2); olutlista.lisaa(saaz23);
             
-            Mauste bisse = new Mauste(id1,id1,id1); bisse.taytaMauste(id1, id1, id1); olutlista.lisaa(bisse);
+            Mauste bisse = new Mauste(id1,id1); bisse.taytaMauste( id1, id1); olutlista.lisaa(bisse);
             
             System.out.println("======================= Olutlista testi ============================");
             

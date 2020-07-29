@@ -3,6 +3,8 @@ package olutlista;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import fi.jyu.mit.ohj2.Mjonot;
+
 /**
  *  tietää humalan kentät (nimi)
  *
@@ -101,6 +103,71 @@ public class Humala {
     public int getOlutNro() {
         return olutNro;
     }
+    
+    /**
+     * Asettaa tunnusnumeron ja samalla varmistaa että
+     * seuraava numero on aina suurempi kuin tähän mennessä suurin.
+     * @param nr asetettava tunnusnumero
+     */
+    private void setTunnusNro(int nr) {
+        tunnusNro = nr;
+        if (tunnusNro >= seuraavaNro) seuraavaNro = tunnusNro + 1;
+    }
+    
+    /**
+     * Jäsenen tiedot merkkijonona tiedostoon tallennettavaksi
+     * @example
+     * <pre name="test">
+     * Olut olut = new Olut();
+     * olut.parse(" 2 | Lapin Kulta | Lager");
+     * olut.toString().startsWith("2|Lapin Kulta|Lager|") ===true;
+     * </pre>
+     *
+     */
+    @Override
+    public String toString() {
+        return "" +
+                getTunnusNro()+ "|"+
+                humala;
+    }
+
+    /**
+     * Selvittää oluen tiedot tolpilla erotelluista merkkijonoista
+     * @param rivi mistä oluen tiedot otetaan
+     * 
+     * @example
+     * <pre name="test">
+     * Olut olut = new Olut();
+     * olut.parse(" 2 | Lapin Kulta | Lager");
+     * olut.getTunnusNro() === 2;
+     * olut.toString().startsWith("2|Lapin Kulta|Lager|") === true;
+     * 
+     * olut.rekisteroi();
+     * int n = olut.getTunnusNro();
+     * olut.parse (""+(n+20));
+     * olut.rekisteroi();
+     * olut.getTunnusNro()=== n+20+1;
+     * 
+     * </pre>
+     */
+    public void parse(String rivi) {
+        StringBuilder sb = new StringBuilder(rivi);
+        setTunnusNro(Mjonot.erota(sb, '|', getTunnusNro()));
+        humala = Mjonot.erota(sb, '|', humala);
+    }
+
+    @Override
+    public boolean equals(Object olut) {
+        if ( olut == null) return false;
+        return this.toString().contentEquals(olut.toString());
+    }
+
+    @Override
+    public int hashCode(){
+        return tunnusNro;
+    }
+    
+    
     
     /**
      * Testiohjelma humalille

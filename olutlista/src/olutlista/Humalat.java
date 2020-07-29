@@ -1,5 +1,12 @@
 package olutlista;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 
@@ -15,7 +22,10 @@ import java.util.*;
  */
 public class Humalat implements Iterable<Humala> {
     
-    private String tiedostonNimi = "";
+    private String           tiedostonNimi      = "";
+    private boolean          muutettu           = false;
+    private String           tiedostonPerusNimi = "humalat";
+
     
     private final Collection<Humala> alkiot = new ArrayList<Humala>();
     
@@ -32,16 +42,78 @@ public class Humalat implements Iterable<Humala> {
      */
     public void lisaa(Humala hum) {
         alkiot.add(hum);
+        muutettu = true;
     }
     
     /**
-     * Humalien lukeminen tiedostosta
-     * @param hakemisto tiedoston hakemisto
-     * @throws SailoException poikkeus lukemisen epäonnistuessa
+     * Lukee oluet tiedostosta
+     * @param nimi tiedoston perusnimi
+     * @throws SailoException epäonnistuessa
+     * 
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException
+     * #import java.io.File;
+     * 
+     * Oluet oluet = new Oluet();
+     * Olut lappari = new Olut;
+     * Olut koff = new Olut;
+     * lappari.taytaOlut();
+     * koff.taytaOlut();
+     * String hakemisto = "testioluet";
+     * String tiedNimi = hakemisto + "/nimet";
+     * File ftied = new File(tiedNimi+ ".dat");
+     * File dir = new File(hakemisto);
+     * dir.mkdir;
+     * ftied.delete();
+     * oluet.lueTiedostosta(tiesNimi); #THROWS SailoException
+     * oluet.lisaa(lappari);
+     * oluet.lisaa(koff);
+     * oluet.talleta();
+     * oluet = new Oluet();
+     * oluet.lueTiedostosta(tiedNimi);
+     * Iterator<Olut> i = oluet.iterator();
+     * i.next() === lappari;
+     * i.next() === koff;
+     * i.hasNext() === false;
+     * oluet.lisaa(koff);
+     * oluet.talleta();
+     * ftied.delete() === true;
+     * File fbak = new File(tiedNimi +".bak");
+     * fbak.delete() === true;
+     * dir.delete() === true;
+     * 
+     * </pre>
      */
-    public void lueTiedostosta(String hakemisto) throws SailoException{
-        tiedostonNimi = hakemisto + ".hum";
-        throw new SailoException("Ei osata vielä lukea tiedostoa" + tiedostonNimi);
+    public void lueTiedostosta(String nimi) throws SailoException{
+        setTiedostonPerusNimi(nimi);
+        try ( BufferedReader fi = new BufferedReader (new FileReader (getTiedostonNimi()))){
+            //tiedostonNimi = fi.readLine();
+            if (tiedostonNimi == null) throw new SailoException ("Listan nimi puuttuu");
+            String rivi = fi.readLine();
+            //if(rivi == null) throw new SailoException ("Maksimikoko puuttu");
+            
+            while((rivi = fi.readLine())  != null) {
+                rivi = rivi.trim();
+                if ("".contentEquals(tiedostonNimi)|| tiedostonNimi.charAt(0) == ';') continue;
+                Humala humala = new Humala();
+                humala.parse(tiedostonNimi);
+                lisaa(humala);
+        }
+        muutettu = false;
+        } catch (FileNotFoundException e) {
+        throw new SailoException ( "Tiedosto" + " " + getTiedostonNimi() + " " + "ei aukea");
+        }catch (IOException e) {
+            throw new SailoException("onkelmia:" + e.getMessage());
+        }
+    }
+    
+    /**
+     * Lukeminen aikasemmin annetun nimisestä tiedostosta
+     * @throws SailoException jos lukeminen epäonnistuu
+     */
+    public void lueTiedostosta() throws SailoException {
+        lueTiedostosta(getTiedostonPerusNimi());
     }
     
     /**
@@ -49,7 +121,26 @@ public class Humalat implements Iterable<Humala> {
      * @throws SailoException tallennuksen epäonnistuessa
      */
     public void tallenna() throws SailoException {
-        throw new SailoException ("Ei osata vielä tallentaa tiedostoa" + tiedostonNimi);
+        if (!muutettu) return;
+        
+        File fbak = new File(getBakNimi());
+        File ftied = new File(getTiedostonNimi());
+        fbak.delete();
+        ftied.renameTo(fbak);
+        
+        try ( PrintStream fo = new PrintStream(new FileOutputStream(ftied.getCanonicalPath())) ){
+            //fo.println(getTiedostonNimi());
+            //fo.println(alkiot.size());
+            for (Humala humala: this) {
+                fo.println(humala.toString());
+            }
+        } catch (FileNotFoundException ex) {
+            throw new SailoException("Tiedosto" + ftied.getName() + "ei aukea");
+        } catch(IOException ex) {
+            throw new SailoException("Tiedosto" + ftied.getName() + "kirjoittamisessa onkelmia");
+        }
+        
+        muutettu = false;
     }
     
     /**
@@ -60,6 +151,37 @@ public class Humalat implements Iterable<Humala> {
         return alkiot.size();
     }
     
+    /**
+     * tiedoston nimi tallennusta varten
+     * @return tallennustiedoston nimi
+     */
+    public String getTiedostonPerusNimi() {
+        return tiedostonPerusNimi;
+    }
+    
+    /**
+     * Perusnimen asetus
+     * @param nimi oletusnimi
+     */
+    public void setTiedostonPerusNimi(String nimi) {
+        tiedostonPerusNimi = nimi;
+    }
+    
+    /**
+     * tallennukseen käytettävä tiedoston nimi
+     * @return tallennustiedoston nimi
+     */
+    public String getTiedostonNimi() {
+        return getTiedostonPerusNimi() +".dat";
+    }
+    
+    /**
+     * varakopiotiedoston nimi
+     * @return varakopiotiedoston nimen
+     */
+    public String getBakNimi(){
+        return tiedostonPerusNimi + ".bak";
+    }
     
     /**
      * Iteraattori kaikkien humaloiden läpikäymiseen

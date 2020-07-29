@@ -3,6 +3,8 @@ package olutlista;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import fi.jyu.mit.ohj2.Mjonot;
+
 /**
  *  tietää humalan kentät (nimi)
  *
@@ -19,7 +21,6 @@ import java.io.PrintStream;
  */
 public class Mauste {
     private String mauste;
-    private int mallasNro;
     private int humalaNro;
     private int olutNro;
     
@@ -36,23 +37,22 @@ public class Mauste {
     
     /**
      * Tietyn oluen mausteiden alustus
-     * @param mallasNro maltaan viitenumero
+    
      * @param humalaNro humalan viitenumero
      * @param olutNro oluen viitenumero
      */
-    public Mauste(int mallasNro, int humalaNro, int olutNro) {
-        this.mallasNro = mallasNro;
+    public Mauste(int humalaNro, int olutNro) {
         this.humalaNro = humalaNro;
         this.olutNro = olutNro;
     }
     
     /**
-     * @param nro1 viite maltaaseen
+    
      * @param nro2 viite humalaan
      * @param nro3 viite olueen, jonka mausteet
      */
-    public void taytaMauste(int nro1, int nro2, int nro3) {
-        mallasNro = nro1;
+    public void taytaMauste(int nro2, int nro3) {
+    
         humalaNro = nro2;
         olutNro = nro3;
     }
@@ -61,7 +61,7 @@ public class Mauste {
      * @param out tietovirta, johon tulostetaan
      */
     public void tulosta(PrintStream out) {
-        this.mauste = this.tunnusNro + " " + this.olutNro +" " + this.humalaNro + " " + this.mallasNro;
+        this.mauste = this.tunnusNro + " " + this.olutNro +" " + this.humalaNro + " ";
         out.println(mauste);
     }
     
@@ -110,14 +110,7 @@ public class Mauste {
     public int getOlutNro() {
         return olutNro;
     }
-    
-    /**
-     * @return palauttaa maltaan id:n
-     */
-    public int getMallasNro() {
-        return mallasNro;
-    }
-    
+
     /**
      * @return palauttaa humalan id:n
      */
@@ -132,13 +125,6 @@ public class Mauste {
         this.olutNro = oid;
     }
     
-    /**
-     * @param mid maltaan id
-     * 
-     */
-    public void setMallasNro(int mid) {
-        this.mallasNro = mid;
-    }
     
     /**
      * @param hid humalan id
@@ -146,6 +132,60 @@ public class Mauste {
     public void setHumalaNro(int hid) {
         this.humalaNro = hid;
     }
+    
+    /**
+     * @param jid järjestysid
+     */
+    public void setTunnusNro(int jid) {
+        this.tunnusNro= jid;
+    }
+    
+    /**
+     * Selvittää oluen tiedot tolpilla erotelluista merkkijonoista
+     * @param rivi mistä oluen tiedot otetaan
+     * 
+     * @example
+     * <pre name="test">
+     * Olut olut = new Olut();
+     * olut.parse(" 2 | Lapin Kulta | Lager");
+     * olut.getTunnusNro() === 2;
+     * olut.toString().startsWith("2|Lapin Kulta|Lager|") === true;
+     * 
+     * olut.rekisteroi();
+     * int n = olut.getTunnusNro();
+     * olut.parse (""+(n+20));
+     * olut.rekisteroi();
+     * olut.getTunnusNro()=== n+20+1;
+     * 
+     * </pre>
+     */
+    public void parse(String rivi) {
+        StringBuilder sb = new StringBuilder(rivi);
+        setTunnusNro(Mjonot.erota(sb, '|', getTunnusNro()));
+        setOlutNro(Mjonot.erota(sb, '|', getOlutNro()));
+        setHumalaNro(Mjonot.erota(sb, '|', getHumalaNro()));
+       
+    }
+    
+    /**
+     * Oluen tiedot merkkijonona tiedostoon tallennettavaksi
+     * @example
+     * <pre name="test">
+     * Olut olut = new Olut();
+     * olut.parse(" 2 | Lapin Kulta | Lager");
+     * olut.toString().startsWith("2|Lapin Kulta|Lager|") ===true;
+     * </pre>
+     *
+     */
+    @Override
+    public String toString() {
+        return "" +
+                getTunnusNro()+ "|"+
+                getOlutNro() + "|"+
+                getHumalaNro();
+                
+    }
+    
     /**
      * Testiohjelma mausteille
      * @param args ei käytössä
@@ -153,7 +193,7 @@ public class Mauste {
     public static void main (String[] args) {
         Mauste mau = new Mauste();
         mau.rekisteroi();
-        mau.taytaMauste(1,1,1);
+        mau.taytaMauste(1,1);
         mau.tulosta(System.out);
     }
 

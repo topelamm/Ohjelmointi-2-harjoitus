@@ -9,7 +9,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import olutlista.Humala;
-import olutlista.Mauste;
 import olutlista.Mausteet;
 import olutlista.Olut;
 import olutlista.Olutlista;
@@ -42,7 +41,6 @@ public class OlutlistaGUIController implements Initializable {
     @FXML private   ListChooser<Olut>chooserOluet;
     @FXML private   ListChooser<Mausteet>chooserMausteet;
     
-    private String olutlistannimi = "oluet";
     
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
@@ -63,15 +61,7 @@ public class OlutlistaGUIController implements Initializable {
     * Käsitellään oluen lisäys uudessa ikkunassa
     */
    @FXML private void handleUusiOlut() {
-       
        uusiOlut();
-       //uusiMallas(); //lisää mallas relaatioon/mauste, mahdollinen useampi (loop?)
-
-       //uusiMauste(); //toteuta maustekohdalla ja maustelista, jokin kahva sille mitä tehdään, ks metadin sisältö ja setolutnro
-       //uusiHumala(); //sama tähän kuin mallas
-       
-       
-       //ModalController.showModal(OlutlistaGUIController.class.getResource("Uusiolut.fxml"), "Lisää olut", null,"");
    }
    
    /**
@@ -85,7 +75,6 @@ public class OlutlistaGUIController implements Initializable {
     * Käsitellään oluen poistaminen uudessa ikkunassa
     */
    @FXML private void handlePoistaOlut() {
-       
        ModalController.showModal(OlutlistaGUIController.class.getResource("Uusiolut.fxml"), "Poista olut", null,"");
    }
    
@@ -93,7 +82,6 @@ public class OlutlistaGUIController implements Initializable {
     * Infoikkuna
     */
    @FXML private void handleInfo() {
-       
        ModalController.showModal(OlutlistaGUIController.class.getResource("Info.fxml"), "Tietoja", null,"");
    }
    
@@ -103,22 +91,19 @@ public class OlutlistaGUIController implements Initializable {
     */
    @FXML private void handleApua() {
        avustus();
-       //ModalController.showModal(OlutlistaGUIController.class.getResource("Apua.fxml"), "Apua", null,"");
    }
    
    /**
     * Avausikkuna
     */
    @FXML private void handleAvaa() {
-       
-       ModalController.showModal(OlutlistaGUIController.class.getResource("Avaa.fxml"), "Avaa", null,"");
+      avaa(); 
    }
    
    /**
     * Tulostusikkuna
     */
    @FXML private void handleTulosta() {
-       
        TulostusController tulostusCtrl = TulostusController.tulosta(null); 
        tulostaValitut(tulostusCtrl.getTextArea()); 
    }
@@ -151,13 +136,21 @@ public class OlutlistaGUIController implements Initializable {
     private     Olutlista       olutlista;
     private     Olut            olutKohdalla;
     private     TextArea        areaOlut = new TextArea();
+    private     String          olutlistannimi = "oluet";
 
     /**
      * Tietojen tallennus
      */
-    private void tallenna() {
-        Dialogs.showMessageDialog("Tallennetetaan! Mutta ei toimi vielä");
+    private String tallenna() {
+        try {
+            olutlista.tallenna();
+            return null;
+        }catch (SailoException ex) {
+            Dialogs.showMessageDialog("Tallennuksessa ongelmia!" + ex.getMessage());
+            return ex.getMessage();
+        }
     }
+    
     
     /**
      * Tarkistetaan onko tallennus tehty
@@ -168,6 +161,16 @@ public class OlutlistaGUIController implements Initializable {
         return true;
     }
     
+    /**
+     * tiedoston nimen kysyntä
+     * @return true onnistuessa, false epäonnistuessa
+     */
+    public boolean avaa() {
+        String uusinimi = ListaNimiController.kysyNimi(null, olutlistannimi);
+        if(uusinimi == null) return false;
+        lueTiedosto(uusinimi);
+        return true;
+    }
     
     private void naytaVirhe(String virhe) {
         if ( virhe == null || virhe.isEmpty() ) {
@@ -186,13 +189,22 @@ public class OlutlistaGUIController implements Initializable {
     /**
      * Alustaa olutlistan lukemalla sen valitun nimisestä tiedostosta
      * @param nimi tiedosto josta olutlistan tiedot luetaan
+     * @return null onnistuessa, jos ei niin virheilmoitus
      */
-    protected void lueTiedosto(String nimi) {
+    protected String lueTiedosto(String nimi) {
         olutlistannimi = nimi;
         setTitle("Olutlista - " + olutlistannimi);
-        String virhe = "Ei osata lukea vielä";  // TODO: tähän oikea tiedoston lukeminen
-        // if (virhe != null) 
-            Dialogs.showMessageDialog(virhe);
+        try {
+            olutlista.lueTiedostosta(nimi);
+            hae(0);
+            return null;
+        } catch (SailoException e) {
+            hae(0);
+            String virhe = e.getMessage();
+            if ( virhe != null)  Dialogs.showMessageDialog(virhe);
+            return virhe;
+        }
+           
     }
 
     
