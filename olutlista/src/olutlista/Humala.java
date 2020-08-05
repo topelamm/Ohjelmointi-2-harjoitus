@@ -20,11 +20,11 @@ import fi.jyu.mit.ohj2.Mjonot;
  * @version 8.7.2020
  *
  */
-public class Humala {
-    private String  humala;
-    private int     olutNro;
+public class Humala implements Cloneable, Tietue {
     private int     tunnusNro;
-    
+    private int     olutNro;
+   
+    private String  humala;
     private static int seuraavaNro = 1;
     
     /**
@@ -114,6 +114,10 @@ public class Humala {
         if (tunnusNro >= seuraavaNro) seuraavaNro = tunnusNro + 1;
     }
     
+    private void setOlutNro(int nr) {
+        olutNro = nr;
+    }
+    
     /**
      * Jäsenen tiedot merkkijonona tiedostoon tallennettavaksi
      * @example
@@ -167,7 +171,111 @@ public class Humala {
         return tunnusNro;
     }
     
+    /**
+     * kenttien määrä
+     * @return kenttien määrä
+     */
+    @Override
+    public int getKenttia() {
+        return 3;
+    }
+
+    /**
+     * ensimmäinen näytettävä kenttä
+     * @return ekan kentän
+     */
+    @Override
+    public int ekaKentta() {
+        return 2;
+    }
+
+    /**
+     * palautetaan kenttää vastaava kysymys
+     * @param k monesko kenttä
+     * @return kenttää vastaava kysymys
+     */
+    @Override
+    public String getKysymys(int k) {
+        switch (k) {
+        case 0: return "Tunnus nro";
+        case 1: return "Olut nro";
+        case 2: return "Humala";
+        default: return "Kaljaa!";
+        }
+    }
+
+    /**
+     * sisältö merkkijonona
+     * @param k monesko kenttä
+     * @return kentän sisältö
+     */
+    @Override
+    public String anna(int k) {
+        switch (k) {
+        case 0: return "" + tunnusNro;
+        case 1: return "" + olutNro;
+        case 2: return "" + humala;
+        default: return "Kaljaa!";
+        }
+    }
+
+    /**
+     * @param k mitä kenttää katsotaan
+     * @param jono millainen merkkijono
+     * @return palauttaa k:n kenttää vastaavan merkkijonon
+     * @example
+         * <pre name="test">
+         *   Olut olut = new Olut();
+         *   olut.aseta(1,"Lapin Kulta") === null;
+         *   olut.aseta(2,"Lager") === null; 
+         * </pre>
+     */
+    @Override
+    public String aseta (int k, String jono) {
+        String tjono = jono.trim();
+        StringBuilder sb = new StringBuilder(tjono);
+        switch (k) {
+        case 0:
+            setTunnusNro(Mjonot.erota(sb, '§', getTunnusNro()));
+            return null;
+        case 1:
+            setOlutNro(Mjonot.erota(sb, '§', getOlutNro()));
+            return null;
+        case 2:
+            try {
+                humala = Mjonot.erotaEx(sb, '§', humala);
+            } catch ( NumberFormatException ex ) {
+                return "Humala ei saa olla tyhjä ";
+            }
+            return null;
+      
+
+        default:
+            
+            return "Kaljaa!";    
+        }
+    }
     
+    /**
+     * Tehdään identtinen klooni huomalasta
+     * @return Object kloonattu humala
+     * @example
+     * 
+     * <pre name="test">
+         * #THROWS CloneNotSupportedException 
+         *   Humala hum = new Humala();
+         *   hum.parse("   2   |  1  |   Saaz ");
+         *   Object kopio = hum.clone();
+         *   kopio.toString() === hum.toString();
+         *   hum.parse("   1   |  2  |   Uute ");
+         *   kopio.toString().equals(hum.toString()) === false;
+         *   
+         * </pre>
+     */
+    @Override
+    public Humala clone() throws CloneNotSupportedException { 
+        return (Humala)super.clone();
+    }
     
     /**
      * Testiohjelma humalille

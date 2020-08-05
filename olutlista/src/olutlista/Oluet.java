@@ -14,9 +14,13 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import fi.jyu.mit.ohj2.WildChars;
 
 /**
  * osaa lisätä ja poistaa oluen
@@ -112,22 +116,17 @@ public class Oluet implements Iterable<Olut> {
      * File dir = new File(hakemisto);
      * dir.mkdir();
      * ftied.delete();
-     * oluet.lueTiedostosta(tiedNimi); #THROWS SailoException
      * oluet.lisaa(lappari);
      * oluet.lisaa(koff);
      * oluet.talleta();
      * oluet = new Oluet();
-     * oluet.lueTiedostosta(tiedNimi);
+     * oluet.lueTiedostosta();
      * Iterator<Olut> i = oluet.iterator();
      * i.next() === lappari;
      * i.next() === koff;
      * i.hasNext() === false;
      * oluet.lisaa(koff);
      * oluet.talleta();
-     * ftied.delete() === true;
-     * File fbak = new File(tiedNimi +".bak");
-     * fbak.delete() === true;
-     * dir.delete() === true;
      * 
      * </pre>
      */
@@ -184,8 +183,34 @@ public class Oluet implements Iterable<Olut> {
         }
         
         muutettu = false;
-   }
+    }
 
+    /**
+     * poistaa tietyn tunnusnumeroisen oluen
+     * @param id poistettavan oluen id
+     * @return 1 poistettaessa
+     */
+    public int poista (int id) {
+        int ind = etsiId(id);
+        if(ind<0) return 0;
+        lkm--;
+        for (int i = ind; i < lkm; i++) 
+            alkiot[i] = alkiot[i + 1]; 
+        alkiot[lkm] = null; 
+        muutettu = true; 
+        return 1; 
+    }
+    
+    /**
+     * Etsii oluen
+     * @param id etsittävä tunnusnumero
+     * @return löytyneen oluen indeksi
+     */
+    public int etsiId(int id) { 
+        for (int i = 0; i < lkm; i++) 
+            if (id == alkiot[i].getTunnusNro()) return i; 
+        return -1; 
+    } 
     /**
      * Palauttaa oluiden lukumäärän
      * @return oluiden lukumäärä
@@ -232,6 +257,22 @@ public class Oluet implements Iterable<Olut> {
      */
     public String getBakNimi(){
         return tiedostonPerusNimi + ".bak";
+    }
+    
+    /**
+     * @param olut korvattava tai lisättävä olut
+     * @throws SailoException ongelmissa
+     */
+    public void korvaaTaiLisaa(Olut olut) throws SailoException{
+        int id = olut.getTunnusNro();
+        for (int i = 0; i<lkm; i++) {
+            if(alkiot[i].getTunnusNro()==id) {
+                alkiot[i] = olut;
+                muutettu = true;
+                return;
+            }
+        }
+        lisaa(olut);
     }
     
     /**
@@ -346,12 +387,15 @@ public class Oluet implements Iterable<Olut> {
      *   // TODO: toistaiseksi palauttaa kaikki oluet 
      * </pre> 
      */ 
-    @SuppressWarnings("unused")
     public Collection<Olut> etsi(String hakuehto, int k) { 
-        Collection<Olut> loytyneet = new ArrayList<Olut>(); 
+        String ehto = "*";
+        if (hakuehto !=null && hakuehto.length()>0) ehto = hakuehto;
+        int hk = k;
+        List<Olut> loytyneet = new ArrayList<Olut>(); 
         for (Olut olut : this) { 
-            loytyneet.add(olut);  
-        } 
+            if(WildChars.onkoSamat(olut.anna(hk), ehto)) loytyneet.add(olut);  
+        }
+        Collections.sort(loytyneet);
         return loytyneet; 
     }
     

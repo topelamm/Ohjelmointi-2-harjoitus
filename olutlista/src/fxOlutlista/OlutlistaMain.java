@@ -12,13 +12,13 @@ import javafx.fxml.FXMLLoader;
 
 /**
  * @author tonip
- * @version 3.6.2020
- *
+ * @version 3.6.2020    
+ *     
  */
 public class OlutlistaMain extends Application {
-	@Override
+	@Override      
 	public void start(Stage primaryStage) {
-		try {
+		try {    
 		    final FXMLLoader ldr = new FXMLLoader(getClass().getResource("OlutlistaGUIView.fxml")); 
 	        final Pane root = (Pane)ldr.load();
 	        final OlutlistaGUIController olutlistaCtrl = (OlutlistaGUIController)ldr.getController();   
@@ -27,7 +27,7 @@ public class OlutlistaMain extends Application {
 	        scene.getStylesheets().add(getClass().getResource("olutlista.css").toExternalForm()); 
 	        primaryStage.setScene(scene);
 	        primaryStage.setTitle("Olutlista"); 
-	        
+	          
 	        Olutlista olutlista = new Olutlista();
             olutlistaCtrl.setOlutlista(olutlista);
             

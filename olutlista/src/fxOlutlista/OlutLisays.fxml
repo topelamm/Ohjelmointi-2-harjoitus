@@ -13,28 +13,28 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane stylesheets="@olutlista.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxOlutlista.OlutLisaysController"> 
    <bottom>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label maxWidth="1000.0" />
+            <Label fx:id="labelVirhe" maxWidth="1000.0" />
             <HBox />
             <ButtonBar prefHeight="40.0" prefWidth="200.0">
               <buttons>
-                <Button defaultButton="true" mnemonicParsing="false" text="OK" />
-                  <Button cancelButton="true" mnemonicParsing="false" text="Cancel" />
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOK" text="OK" />
+                  <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
               </buttons>
                <padding>
                   <Insets right="10.0" />
-               </padding>
+               </padding> 
             </ButtonBar>
          </children>
       </VBox>
    </bottom>
    <center>
-      <ScrollPane fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="panelOlut" fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
          <content>
-            <GridPane hgap="10.0">
+            <GridPane fx:id="gridOlut" hgap="10.0">
                <columnConstraints>
                   <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" minWidth="10.0" />
                   <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
@@ -48,24 +48,28 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <Label text="nimi" />
-                  <Label text="Tyylilaji" GridPane.rowIndex="1" />
-                  <Label text="Vahvuus" GridPane.rowIndex="2" />
-                  <Label text="Arvio" GridPane.rowIndex="3" />
-                  <Label text="Humalat" GridPane.rowIndex="4" />
-                  <Label text="Maltaat" GridPane.rowIndex="5" />
-                  <Label text="Resepti" GridPane.rowIndex="6" />
-                  <Label text="Huomioita" GridPane.rowIndex="7" />
-                  <TextField text="Olvi III" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                  <Label text="tyyli" GridPane.rowIndex="1" />
+                  <Label text="vahvuus" GridPane.rowIndex="2" />
+                  <Label text="arvosana" GridPane.rowIndex="3" />
+                  <Label text="mallas" GridPane.rowIndex="4" />
+                  <Label text="resepti" GridPane.rowIndex="5" />
+                  <Label text="huomioita" GridPane.rowIndex="6" />
+                  
+                  <TextField text="Lapin Kulta" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
                   <TextField text="Lager" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                  <TextField text="4,6" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                  <TextField text="15" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                  <TextField text="Jotain taitaa olla" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
-                  <TextField text="Ohratärkkelys" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
-                  <TextField text="-" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
-                  <TextField text="Ainoa suomalaisomisteinen suurpanimo" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" />
+                  <TextField text="9.5" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                  <TextField text="8" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                  <TextField text="ohra" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                  <TextField text="kai joku" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
+                  <TextField text="älä osta" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
+
                </children>
                <opaqueInsets>
                   <Insets left="10.0" top="10.0" />

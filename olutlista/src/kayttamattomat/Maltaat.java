@@ -1,9 +1,11 @@
-package olutlista;
+package kayttamattomat;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import olutlista.SailoException;
 
 /**
  * osaa lisätä ja poistaa maltaan

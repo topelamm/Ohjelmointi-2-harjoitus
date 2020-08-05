@@ -5,11 +5,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Font;
+import javafx.scene.layout.GridPane;
+import kayttamattomat.Mausteet;
 import olutlista.Humala;
-import olutlista.Mausteet;
 import olutlista.Olut;
 import olutlista.Olutlista;
 import olutlista.SailoException;
@@ -20,6 +21,11 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import static fxOlutlista.OlutLisaysController.getFieldId;
+
+import java.util.Collection;
+import java.util.List;
 //import java.util.List;
 import java.util.ResourceBundle;
 
@@ -41,6 +47,18 @@ public class OlutlistaGUIController implements Initializable {
     @FXML private   ListChooser<Olut>chooserOluet;
     @FXML private   ListChooser<Mausteet>chooserMausteet;
     
+    @FXML private   TextField editNimi;
+    @FXML private   TextField editVahvuus;
+    @FXML private   TextField editTyyli;
+    @FXML private   TextField editArvio;
+    @FXML private   TextField editMaltaat;
+    @FXML private   TextField editResepti;
+    @FXML private   TextField editHuomioita;
+    
+    @FXML private   StringGrid<Humala>  tableHumalat;
+    
+    @FXML private   GridPane            gridOlut;
+    
     
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
@@ -49,12 +67,14 @@ public class OlutlistaGUIController implements Initializable {
     
     
     @FXML private void handleHakuehto() {
-        String hakukentta = cbKentat.getSelectedText();
-        String ehto = hakuehto.getText(); 
-        if ( ehto.isEmpty() )
-            naytaVirhe(null);
-        else
-            naytaVirhe("Ei osata vielä hakea " + hakukentta + ": " + ehto);
+       hae(0);
+        
+        // String hakukentta = cbKentat.getSelectedText();
+       // String ehto = hakuehto.getText(); 
+       // if ( ehto.isEmpty() )
+       //     naytaVirhe(null);
+       // else
+       //     naytaVirhe("Ei osata vielä hakea " + hakukentta + ": " + ehto);
     }
  
    /**
@@ -75,7 +95,7 @@ public class OlutlistaGUIController implements Initializable {
     * Käsitellään oluen poistaminen uudessa ikkunassa
     */
    @FXML private void handlePoistaOlut() {
-       ModalController.showModal(OlutlistaGUIController.class.getResource("Uusiolut.fxml"), "Poista olut", null,"");
+       poistaOlut();
    }
    
    /**
@@ -108,13 +128,19 @@ public class OlutlistaGUIController implements Initializable {
        tulostaValitut(tulostusCtrl.getTextArea()); 
    }
 
-    /**
+   @FXML private void handleMuokkaaOlut() {
+       muokkaa(kentta);
+   }
+  
+   @FXML private void handleMuokkaaHumala() {
+       muokkaaHumalaa();
+   }
+     /**
      * Käsitellään tallennuskäsky
      */
     @FXML private void handleTallenna() {
         tallenna();
     }
-    
     
     /**
      * Käsitellään lopetuskäsky
@@ -128,15 +154,18 @@ public class OlutlistaGUIController implements Initializable {
      * Käsitellään humalan poistaminen
      */
     @FXML private void handlePoistaHumala() {
-        Dialogs.showMessageDialog("Ei osata vielä poistaa humalaa!");
+        poistaHumala();
     }
 
     //=====================================================================================================================================================================================================
     
     private     Olutlista       olutlista;
     private     Olut            olutKohdalla;
-    private     TextArea        areaOlut = new TextArea();
     private     String          olutlistannimi = "oluet";
+    private     TextField[]     edits;
+    private     int             kentta = 0;
+    private     static Humala   apuhumala = new Humala();
+    private     static Olut     apuolut = new Olut();
 
     /**
      * Tietojen tallennus
@@ -172,15 +201,15 @@ public class OlutlistaGUIController implements Initializable {
         return true;
     }
     
-    private void naytaVirhe(String virhe) {
-        if ( virhe == null || virhe.isEmpty() ) {
-            labelVirhe.setText("");
-            labelVirhe.getStyleClass().removeAll("virhe");
-            return;
-        }
-        labelVirhe.setText(virhe);
-        labelVirhe.getStyleClass().add("virhe");
-    }
+   // private void naytaVirhe(String virhe) {
+   //     if ( virhe == null || virhe.isEmpty() ) {
+   //         labelVirhe.setText("");
+   //         labelVirhe.getStyleClass().removeAll("virhe");
+   //         return;
+   //     }
+   //     labelVirhe.setText(virhe);
+   //     labelVirhe.getStyleClass().add("virhe");
+   // }
 
     private void setTitle(String title) {
         ModalController.getStage(hakuehto).setTitle(title);
@@ -205,29 +234,46 @@ public class OlutlistaGUIController implements Initializable {
             if ( virhe != null)  Dialogs.showMessageDialog(virhe);
             return virhe;
         }
-       
     }
-
-    
     /**
-     * @param jnro järjestysnumero oluelle
+     * @param jnr järjestysnumero oluelle
      */
-    protected void hae(int jnro) {
+    protected void hae(int jnr) {
+        int jnro = jnr;
         chooserOluet.clear();
+        if (jnro <= 0) {
+            Olut kohdalla = olutKohdalla;
+            if(kohdalla != null) jnro = kohdalla.getTunnusNro();
+        }
         
+        int k = cbKentat.getSelectedIndex() + apuolut.ekaKentta();
+        String ehto = hakuehto.getText();
+        if(ehto.indexOf('*')<0) ehto = "*" + ehto + "*";
         int index =0;
-        for(int i =0; i < olutlista.getOluet(); i++){
-           Olut olut = olutlista.annaOlut(i);
+        Collection<Olut> oluet;
+        try {
+            
+        oluet = olutlista.etsi(ehto, k);
+        int i = 0;
+        for (Olut olut : oluet) {
+       
            if(olut.getTunnusNro()== jnro) index = i;
            chooserOluet.add(olut.getNimi(), olut);
+           i++;
+        }
+        
+        }catch (SailoException ex) {
+        Dialogs.showMessageDialog("Onkelmia hakemisessa!" + ex.getMessage());
         }
         chooserOluet.getSelectionModel().clearAndSelect(index);
     }
     
     private void uusiOlut() {
         Olut uusi = new Olut();
+        uusi = OlutLisaysController.kysyOlut(null, uusi,1);
+        if(uusi == null) return;
         uusi.rekisteroi();
-        uusi.taytaOlut();
+        //uusi.taytaOlut();
        try {
             olutlista.lisaa(uusi);
         } catch(SailoException e) {
@@ -240,27 +286,105 @@ public class OlutlistaGUIController implements Initializable {
     
     /** 
      * Tekee uuden tyhjän humalan editointia varten 
+    
      */ 
-    public void uusiHumala() { 
-        if ( olutKohdalla == null ) return;  
-        Humala uusi = new Humala();
+    public void uusiHumala()  { 
+        if ( olutKohdalla == null ) return;
+        try {
+        Humala uusi = new Humala(olutKohdalla.getTunnusNro());
+        uusi = TietueDialogController.kysyTietue(null, uusi, 0);
+        if ( uusi == null ) return;
         uusi.rekisteroi();
-        uusi.taytaHumala(olutKohdalla.getTunnusNro());
         olutlista.lisaa(uusi);
-        hae(olutKohdalla.getTunnusNro());
-        
+        naytaHumalat(olutKohdalla); 
+        tableHumalat.selectRow(1000);
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("Lisääminen epäonnistui: " + e.getMessage());
+        }
     } 
+    
+    private void poistaOlut() {
+        Olut olut = olutKohdalla;
+        if (olut == null) return;
+        if (!Dialogs.showQuestionDialog("poisto", "Ootko varma ettet juonut:" + olut.getNimi(), "Suattaapi olla", "Suottaapi olla etten"))
+            return;
+        olutlista.poista(olut);
+        int index = chooserOluet.getSelectedIndex();
+        hae(0);
+        chooserOluet.setSelectedIndex(index);
+    }
+    
+    private void poistaHumala() {
+        int rivi = tableHumalat.getRowNr();
+        if ( rivi < 0 ) return;
+        Humala humala = tableHumalat.getObject();
+        if ( humala == null ) return;
+        olutlista.poistaHumala(humala);
+        naytaHumalat(olutKohdalla);
+        int humalia = tableHumalat.getItems().size(); 
+        if ( rivi >= humalia ) rivi = humalia -1;
+        tableHumalat.getFocusModel().focus(rivi);
+        tableHumalat.getSelectionModel().select(rivi);
+    }
     
     /**
      * 
      */
     protected void alusta() {
-        panelOlut.setContent(areaOlut);
-        areaOlut.setFont (new Font ("Courier New", 12));
-        panelOlut.setFitToHeight(true);
+        //panelOlut.setContent(areaOlut);
+        //areaOlut.setFont (new Font ("Courier New", 12));
+        //panelOlut.setFitToHeight(true);
         
         chooserOluet.clear();
         chooserOluet.addSelectionListener(e->naytaOlut());
+        edits = OlutLisaysController.luoKentta(gridOlut);
+        for (TextField edit: edits)
+            if (edit !=null) {
+                edit.setEditable(false);
+                edit.setOnMouseClicked(e ->  { if ( e.getClickCount() > 1 ) muokkaa(getFieldId(e.getSource(),kentta)); });  
+                edit.focusedProperty().addListener((a,o,n) -> kentta = getFieldId(edit,kentta));  
+            }
+        
+        int eka = apuhumala.ekaKentta(); 
+        int lkm = apuhumala.getKenttia(); 
+        String[] headings = new String[lkm-eka]; 
+        for (int i=0, k=eka; k<lkm; i++, k++) headings[i] = apuhumala.getKysymys(k); 
+        tableHumalat.initTable(headings); 
+        tableHumalat.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); 
+        tableHumalat.setEditable(false); 
+        tableHumalat.setPlaceholder(new Label("Humaloimaton")); 
+         
+        // Tämä on vielä huono, ei automaattisesti muutu jos kenttiä muutetaan. 
+        tableHumalat.setColumnSortOrderNumber(1); 
+        tableHumalat.setColumnSortOrderNumber(2); 
+        tableHumalat.setColumnWidth(1, 60); 
+        
+        //edits = new TextField[] {editNimi, editTyyli,
+        //editArvio,
+       //editVahvuus,
+        //editMaltaat,
+        //editResepti,
+        //editHuomioita};
+        
+    
+        
+    }
+    
+    
+    private void muokkaa(int k) {
+        if (olutKohdalla == null) return;
+        try {
+            Olut olut = OlutLisaysController.kysyOlut(null, olutKohdalla.clone(), k);
+            if (olut == null) return;
+            olutlista.korvaaTaiLisaa(olut);
+            hae(olut.getTunnusNro());
+        }catch (CloneNotSupportedException e) {
+            //
+        }catch (SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+        }
+        
+        
     }
     
     /**
@@ -271,19 +395,51 @@ public class OlutlistaGUIController implements Initializable {
         
         if(olutKohdalla == null) return;
         
-        Humala humala;
-        humala = olutlista.annaHumalat(olutKohdalla);
+        TietueDialogController.naytaTietue(edits, olutKohdalla);
+        naytaHumalat(olutKohdalla);
+        
+        
+        //editTyyli.setText(olutKohdalla.getTyyli());
+        //editArvio.setText(olutKohdalla.getArvio());
+        //editVahvuus.setText(olutKohdalla.getVahvuus());
+        //editMaltaat.setText(olutKohdalla.getMaltaat());
+        //editResepti.setText(olutKohdalla.getResepti());
+        //editHuomioita.setText(olutKohdalla.getHuomioita());
+        
+        //Humala humala;
+        //humala = olutlista.annaHumalat(olutKohdalla);
        
 
-        areaOlut.setText("");
-        try (PrintStream os = TextAreaOutputStream.getTextPrintStream(areaOlut)) {
-            olutKohdalla.tulosta(os);
-            humala.tulosta(os);
-        }
+       // areaOlut.setText("");
+       // try (PrintStream os = TextAreaOutputStream.getTextPrintStream(areaOlut)) {
+        //    olutKohdalla.tulosta(os);
+        //    humala.tulosta(os);
+       // }
 
     }
     
+    private void naytaHumalat(Olut olut) {
+        tableHumalat.clear();
+        if(olut == null) return;
+        List<Humala> humalat = olutlista.annaHumalat(olut);
+        if ( humalat.size() == 0 ) return;
+        for (Humala hum: humalat)
+            naytaHumala(hum);
+        
+        
+        //naytaHumala(humala);
+        //tableHumalat.set
+        //textPaikkakunta.setText(paikkakunta.toString());
+
+    }
     
+    private void naytaHumala(Humala hum) {
+        int kenttia = hum.getKenttia(); 
+        String[] rivi = new String[kenttia-hum.ekaKentta()]; 
+        for (int i=0, k=hum.ekaKentta(); k < kenttia; i++, k++) 
+            rivi[i] = hum.anna(k); 
+        tableHumalat.add(hum,rivi);
+    }
     /**
      * @param olutlista olutlista, jota käsitellään
      */
@@ -301,8 +457,10 @@ public class OlutlistaGUIController implements Initializable {
         os.println("----------------------------------------------");
         olut.tulosta(os);
         os.println("----------------------------------------------");
-        Humala humala = olutlista.annaHumalat(olut);
-        humala.tulosta(os);
+        
+        List<Humala> humalat = olutlista.annaHumalat(olut);
+        for (Humala hum:humalat) 
+            hum.tulosta(os);  
 
     }
 
@@ -333,5 +491,23 @@ public class OlutlistaGUIController implements Initializable {
             } catch (IOException e) {
                 return;
             }
+    }
+    
+    private void muokkaaHumalaa() {
+        int r = tableHumalat.getRowNr();
+        if ( r < 0 ) return; 
+        Humala humala = tableHumalat.getObject();
+        if ( humala == null ) return;
+        int k = tableHumalat.getColumnNr()+humala.ekaKentta();
+        try {
+            humala = TietueDialogController.kysyTietue(null, humala.clone(), k);
+            if ( humala == null ) return;
+            olutlista.korvaaTaiLisaa(humala); 
+            naytaHumalat(olutKohdalla); 
+            tableHumalat.selectRow(r);  
+        } catch (CloneNotSupportedException  e) { /* clone on tehty */  
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog("Ongelmia lisäämisessä: " + e.getMessage());
+        }
     }
 }

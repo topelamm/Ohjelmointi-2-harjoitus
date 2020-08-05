@@ -28,7 +28,7 @@ public class Humalat implements Iterable<Humala> {
     private String           tiedostonPerusNimi = "humalat";
 
     
-    private final Collection<Humala> alkiot = new ArrayList<Humala>();
+    private final List<Humala> alkiot = new ArrayList<Humala>();
     
     /**
      * Alustus
@@ -56,32 +56,25 @@ public class Humalat implements Iterable<Humala> {
      * #import java.io.File;
      * 
      * Oluet oluet = new Oluet();
-     * Olut lappari = new Olut;
-     * Olut koff = new Olut;
+     * Olut lappari = new Olut();
+     * Olut koff = new Olut();
      * lappari.taytaOlut();
      * koff.taytaOlut();
      * String hakemisto = "testioluet";
      * String tiedNimi = hakemisto + "/nimet";
      * File ftied = new File(tiedNimi+ ".dat");
-     * File dir = new File(hakemisto);
-     * dir.mkdir;
      * ftied.delete();
-     * oluet.lueTiedostosta(tiesNimi); #THROWS SailoException
      * oluet.lisaa(lappari);
      * oluet.lisaa(koff);
      * oluet.talleta();
      * oluet = new Oluet();
-     * oluet.lueTiedostosta(tiedNimi);
+     * oluet.lueTiedostosta();
      * Iterator<Olut> i = oluet.iterator();
      * i.next() === lappari;
      * i.next() === koff;
      * i.hasNext() === false;
      * oluet.lisaa(koff);
      * oluet.talleta();
-     * ftied.delete() === true;
-     * File fbak = new File(tiedNimi +".bak");
-     * fbak.delete() === true;
-     * dir.delete() === true;
      * 
      * </pre>
      */
@@ -233,22 +226,68 @@ public class Humalat implements Iterable<Humala> {
      *  Humala saaz4 = new Humala(1); humalat.lisaa(saaz4);
      *  Humala saaz5 = new Humala(2); humalat.lisaa(saaz5);
      *  
-     *  List<Humala> loytyneet;
-     *  loytyneet = humalat.annaHumalat(3);
-     *  loytyneet.size() === 0;
-     *  loytyneet = humalat.annaHumalat(1);
-     *  loytyneet.size() === 2;
-     *  loytyneet.get(0) == saaz2 === true;
-     *  loytyneet.get(1) == saaz4 === true;
+     *  Humala loytyneet = humalat.annaHumalat(3);
+     *  Humala loytyneet2 = humalat.annaHumalat(1);
+     *  loytyneet.getTunnusNro() === 0;
+     *  loytyneet2.getTunnusNro() === 0;
+   
      *  
      * </pre>
      */
-    public Humala annaHumalat (int tunnusnro){
-        Humala loydetyt = new Humala();
+   
+    
+    public List<Humala> annaHumalat(int tunnusnro) {
+        List<Humala> loydetyt = new ArrayList<Humala>();
         for (Humala hum : alkiot)
-            if (hum.getOlutNro() == tunnusnro) loydetyt = hum;
+            if ( hum.getTunnusNro() == tunnusnro ) loydetyt.add(hum);
         return loydetyt;
     }
+    
+    /**
+     * @param humala korvattava tai lisättävä humala
+     * @throws SailoException ongelmissa
+     */
+    public void korvaaTaiLisaa(Humala humala) throws SailoException{
+        int id = humala.getTunnusNro();
+        for (int i = 0; i<getLkm(); i++) {
+            if (alkiot.get(i).getTunnusNro() == id) {
+                alkiot.set(i, humala);
+                muutettu = true;
+                return;
+            }
+        }
+        lisaa(humala);
+    }
+    
+    /**
+     * Poistaa oluen humalat
+     * @param tunnusNro mitkä poistetaan
+     * @return montako poistettiin
+     */
+    public int poistaHumalat(int tunnusNro) {
+        int n = 0;
+        for (Iterator<Humala> it = alkiot.iterator(); it.hasNext();) {
+            Humala hum = it.next();
+            if ( hum.getTunnusNro() == tunnusNro ) {
+                it.remove();
+                n++;
+            }
+        }
+        if (n > 0) muutettu = true;
+        return n;
+    }
+    
+    /**
+     * Poistetaan yksi humala
+     * @param humala poistettava humala
+     * @return true poistettavan löytyessä
+     */
+    public boolean poista(Humala humala) {
+        boolean ret = alkiot.remove(humala);
+        if (ret) muutettu = true;
+        return ret;
+    }
+
     
     /**
      * testiohjelma

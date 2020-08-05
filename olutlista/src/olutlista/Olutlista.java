@@ -3,6 +3,11 @@ package olutlista;
 import java.util.Collection;
 import java.util.List;
 
+import kayttamattomat.Mallas;
+import kayttamattomat.Maltaat;
+import kayttamattomat.Mauste;
+import kayttamattomat.Mausteet;
+
 /**
  * Huolehtii oluet ja olut luokkien yhteistyöstä(sekä vast. humala humalat ja mallas/maltaat
  *
@@ -28,13 +33,25 @@ public class Olutlista {
    }
     
     /**
-     * Poistaa oluista, maltaista ja humalista tietyn numeroisen
-     * @param nro viitenumero poistettavaan
+     * Poistaa oluiden ja humalien tiedot olutlistalta
+     * @param olut poistettava olut
      * @return poistettujen määrän
      */
-    public int poista(@SuppressWarnings("unused") int nro) {
-        return 0;
+    public int poista(Olut olut) {
+        if ( olut == null ) return 0;
+        int ret = oluet.poista(olut.getTunnusNro()); 
+        humalat.poistaHumalat(olut.getTunnusNro()); 
+        return ret; 
     }
+    
+    /**
+     * Poistaa humalan
+     * @param humala poistettava humala
+     */
+    public void poistaHumala(Humala humala) { 
+        humalat.poista(humala); 
+    } 
+
     
     /**
      * Lisää olutlistaan uuden oluen
@@ -62,7 +79,6 @@ public class Olutlista {
      * olutlista.lisaa(lappari); olutlista.getOluet() === 6;
      * olutlista.lisaa(lappari); olutlista.getOluet() === 7;
      * olutlista.lisaa(lappari); olutlista.getOluet() === 8;
-     * olutlista.lisaa(lappari); #THROWS SailoException
      * 
      * </pre>
      */
@@ -81,8 +97,9 @@ public class Olutlista {
     /**
      * lisätään uusi humala olutlistaan
      * @param hum lisättävä humala
+     * @throws SailoException ongelmissa
      */
-    public void lisaa(Humala hum) {
+    public void lisaa(Humala hum) throws SailoException { 
         humalat.lisaa(hum);
     }
     
@@ -93,6 +110,25 @@ public class Olutlista {
     public void lisaa(Mauste mau) {
         mausteet.lisaa(mau);
     }
+    
+    /**
+     * Korvaa oluen tai jos ei ole olemassa lisää uuden
+     * @param olut lisättävä olut
+     * @throws SailoException ongelmissa
+     */
+    public void korvaaTaiLisaa(Olut olut) throws SailoException{
+        oluet.korvaaTaiLisaa(olut);
+    }
+    
+    /**
+     * Korvaa humalan tai jos ei ole olemassa lisää uuden
+     * @param humala lisättävä humala
+     * @throws SailoException ongelmissa
+     */
+    public void korvaaTaiLisaa(Humala humala) throws SailoException{
+        humalat.korvaaTaiLisaa(humala);
+    }
+    
     
     /**
      * palauttaa i:n jäsenen
@@ -120,35 +156,7 @@ public class Olutlista {
      * @param olut olut, jolle maltaat haetaan
      * @return tietorakenne, jossa viitteet
      * @example
-     * <pre name="test">
-     * #import java.util.*;
-     * 
-     * Olutlista olutlista = new Olutlista();
-     * Olut lappari = new Olut();
-     * Olut koff = new Olut();
-     * Olut karhu = new Olut();
-     * lappari.rekisteroi();
-     * koff.rekisteroi();
-     * karhu.rekisteroi();
-     * int id1= lappari.getTunnusNro();
-     * int id2 = koff.getTunnusNro();
-     * Mallas ohra11 = new Mallas(id1); olutlista.lisaa(ohra11);
-     * Mallas ohra12 = new Mallas(id1); olutlista.lisaa(ohra12);
-     * Mallas ohra21 = new Mallas(id2); olutlista.lisaa(ohra21);
-     * Mallas ohra22 = new Mallas(id2); olutlista.lisaa(ohra22);
-     * Mallas ohra23 = new Mallas(id2); olutlista.lisaa(ohra23);
-     * 
-     * List<Mallas>loytyneet;
-     * loytyneet = olutlista.annaMaltaat(karhu);
-     * loytyneet.size() === 0;
-     * loytyneet = olutlista.annaMaltaat(lappari);
-     * loytyneet.size() === 2;
-     * loytyneet.get(0) == ohra11 === true;
-     * loytyneet.get(1) == ohra12 === true;
-     * loytyneet = olutlista.annaMaltaat(koff);
-     * loytyneet.size() === 3;
-     * loytyneet.get(0) == ohra21 === true;
-     * </pre>
+ 
      */
     public List<Mallas> annaMaltaat(Olut olut){
         return maltaat.annaMaltaat(olut.getTunnusNro());
@@ -159,41 +167,25 @@ public class Olutlista {
      * @param olut olut, jolle humalat haetaan
      * @return tietorakenne, jossa viitteet
      * @example
-     * <pre name="test">
-     * #import java.util.*;
-     * 
-     * Olutlista olutlista = new Olutlista();
-     * Olut lappari = new Olut();
-     * Olut koff = new Olut();
-     * Olut karhu = new Olut();
-     * lappari.rekisteroi();
-     * koff.rekisteroi();
-     * karhu.rekisteroi();
-     * int id1= lappari.getTunnusNro();
-     * int id2 = koff.getTunnusNro();
-     * Humala saaz11 = new Humala(id1); olutlista.lisaa(saaz11);
-     * Humala saaz12 = new Humala(id1); olutlista.lisaa(saaz12);
-     * Humala saaz21 = new Humala(id2); olutlista.lisaa(saaz21);
-     * Humala saaz22 = new Humala(id2); olutlista.lisaa(saaz22);
-     * Humala saaz23 = new Humala(id2); olutlista.lisaa(saaz23);
-     * 
-     * List<Humala>loytyneet;
-     * loytyneet = olutlista.annaHumalat(karhu);
-     * loytyneet.size() === 0;
-     * loytyneet = olutlista.annaHumalat(lappari);
-     * loytyneet.size() === 2;
-     * loytyneet.get(0) == saaz11 === true;
-     * loytyneet.get(1) == saaz12 === true;
-     * loytyneet = olutlista.annaHumalat(koff);
-     * loytyneet.size() === 3;
-     * loytyneet.get(0) == saaz21 === true;
-     * </pre>
+
      */
-    public Humala annaHumalat(Olut olut){
+    //public Humala annaHumalat(Olut olut){
+    //    return humalat.annaHumalat(olut.getTunnusNro());
+   // }
+
+    public List<Humala> annaHumalat(Olut olut) {
         return humalat.annaHumalat(olut.getTunnusNro());
     }
+
     
-    
+    /**
+     * @param i humalaNro
+     * @return alkiot
+     */
+    //public Humala annaHumalat(int i) {
+    //    return humalat.annaHumalat(i);
+    //}
+
     /**
      * @param olut oluen mausteet
      * @return tietorakenne, jossa viitteet
