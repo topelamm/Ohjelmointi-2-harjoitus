@@ -11,6 +11,13 @@ import javafx.fxml.FXMLLoader;
 
 
 /**
+ * Ohjelmassa on tehty listaus sovellus, jolla voi pitää kirjaa nautituista oluista. 
+ * Nykyisessä yhdelle oluelle voi laittaa useamman humalan.
+ * 
+ * Alkuperäisestä suunnitelmasta jäi toteuttamatta vastaava lisäys mahdollisuus maltaille kuin humalille
+ * Mausteet relaatioluokan avulla.
+ * 
+ * 
  * @author tonip
  * @version 3.6.2020    
  *     

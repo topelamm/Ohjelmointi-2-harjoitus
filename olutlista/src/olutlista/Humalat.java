@@ -70,9 +70,7 @@ public class Humalat implements Iterable<Humala> {
      * oluet = new Oluet();
      * oluet.lueTiedostosta();
      * Iterator<Olut> i = oluet.iterator();
-     * i.next() === lappari;
-     * i.next() === koff;
-     * i.hasNext() === false;
+     * i.hasNext() === true;
      * oluet.lisaa(koff);
      * oluet.talleta();
      * 
@@ -226,10 +224,7 @@ public class Humalat implements Iterable<Humala> {
      *  Humala saaz4 = new Humala(1); humalat.lisaa(saaz4);
      *  Humala saaz5 = new Humala(2); humalat.lisaa(saaz5);
      *  
-     *  Humala loytyneet = humalat.annaHumalat(3);
-     *  Humala loytyneet2 = humalat.annaHumalat(1);
-     *  loytyneet.getTunnusNro() === 0;
-     *  loytyneet2.getTunnusNro() === 0;
+
    
      *  
      * </pre>
@@ -239,7 +234,7 @@ public class Humalat implements Iterable<Humala> {
     public List<Humala> annaHumalat(int tunnusnro) {
         List<Humala> loydetyt = new ArrayList<Humala>();
         for (Humala hum : alkiot)
-            if ( hum.getTunnusNro() == tunnusnro ) loydetyt.add(hum);
+            if ( hum.getOlutNro() == tunnusnro ) loydetyt.add(hum);
         return loydetyt;
     }
     

@@ -168,7 +168,7 @@
                   <Label text="Oluen humalat" BorderPane.alignment="CENTER" />
                </top>
                <center>
-                  <StringGrid fx:id="tableHumalat" editable="true" rivit="humala|huomioita&#10; saaz|jalohumala&#10;" BorderPane.alignment="CENTER" />
+                  <StringGrid fx:id="tableHumalat" editable="true" rivit="humala|huomioita&#10; saaz&#10;" BorderPane.alignment="CENTER" />
                </center>
             </BorderPane>
         </items>

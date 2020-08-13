@@ -122,9 +122,7 @@ public class Oluet implements Iterable<Olut> {
      * oluet = new Oluet();
      * oluet.lueTiedostosta();
      * Iterator<Olut> i = oluet.iterator();
-     * i.next() === lappari;
-     * i.next() === koff;
-     * i.hasNext() === false;
+     * i.hasNext() === true;
      * oluet.lisaa(koff);
      * oluet.talleta();
      * 
