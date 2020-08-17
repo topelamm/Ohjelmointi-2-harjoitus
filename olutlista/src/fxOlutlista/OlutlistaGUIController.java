@@ -224,8 +224,8 @@ public class OlutlistaGUIController implements Initializable {
         olutlistannimi = nimi;
         setTitle("Olutlista - " + olutlistannimi);
         try {
-            olutlista.lueOluetTiedostosta();
-            olutlista.lueHumalatTiedostosta();
+            olutlista.lueTiedostosta(nimi);
+           // olutlista.lueHumalatTiedostosta();
             hae(0);
             return null;
         } catch (SailoException e) {

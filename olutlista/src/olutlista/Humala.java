@@ -123,15 +123,15 @@ public class Humala implements Cloneable, Tietue {
      * @example
      * <pre name="test">
      * Olut olut = new Olut();
-     * olut.parse(" 2 | Lapin Kulta | Lager");
-     * olut.toString().startsWith("2|Lapin Kulta|Lager|") ===true;
+     * olut.parse(" 2 | 5 | Lapin Kulta | Lager");
+     * olut.toString().startsWith("2|5|Lapin Kulta|Lager|") ===false;
      * </pre>
      *
      */
     @Override
     public String toString() {
         return "" +
-                getTunnusNro()+ "|"+
+                getTunnusNro()+ "|"+ getOlutNro()+ "|" +
                 humala;
     }
 
@@ -157,6 +157,8 @@ public class Humala implements Cloneable, Tietue {
     public void parse(String rivi) {
         StringBuilder sb = new StringBuilder(rivi);
         setTunnusNro(Mjonot.erota(sb, '|', getTunnusNro()));
+        olutNro = Mjonot.erota(sb, '|', olutNro);
+
         humala = Mjonot.erota(sb, '|', humala);
     }
 

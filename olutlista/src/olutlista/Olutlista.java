@@ -203,12 +203,12 @@ public class Olutlista {
     public void lueTiedostosta(String nimi) throws SailoException{
         oluet = new Oluet();
         humalat = new Humalat();
-        mausteet = new Mausteet();
+       
         
         setTiedosto(nimi);
         oluet.lueTiedostosta();
         humalat.lueTiedostosta();
-        mausteet.lueTiedostosta();
+        
     }
     
     /**
@@ -236,7 +236,7 @@ public class Olutlista {
         if( !nimi.isEmpty() ) hakemistonNimi = nimi + "_";
         oluet.setTiedostonPerusNimi(hakemistonNimi + "nimet");
         humalat.setTiedostonPerusNimi(hakemistonNimi + "humalat");
-        mausteet.setTiedostonPerusNimi(hakemistonNimi + "mausteet");
+        
     }
     
     /**
